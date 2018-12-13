@@ -74,5 +74,39 @@ public class UserEventServiceApplicationTests {
 
 		Assert.assertEquals( "free-booking", result.get(0).getEventType());
 	}
+
+	@Test
+	public void testSearchByDate() throws Exception
+	{
+
+		String response = mockMvc.perform(get("/events/getbydate/2018-12-05/2018-12-15"))
+				.andExpect(status().isOk())
+				.andReturn()
+				.getResponse()
+				.getContentAsString();
+		logger.error("Result is "+response);
+
+		List<Event> result = mapper.readValue(response,new TypeReference<List<Event>>(){});
+
+		Assert.assertNotNull(result);
+
+	}
+
+	@Test
+	public void testSearchByDateNoData() throws Exception
+	{
+
+		String response = mockMvc.perform(get("/events/getbydate/2018-12-05/2018-12-10"))
+				.andExpect(status().isOk())
+				.andReturn()
+				.getResponse()
+				.getContentAsString();
+		logger.error("Result is "+response);
+
+		List<Event> result = mapper.readValue(response,new TypeReference<List<Event>>(){});
+
+		Assert.assertEquals(0,result.size());
+
+	}
 }
 
