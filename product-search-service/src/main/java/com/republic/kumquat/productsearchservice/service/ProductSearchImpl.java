@@ -20,10 +20,13 @@ public class ProductSearchImpl {
         Product product = new Product();
         product.setBrand("Tomy");
         product.setColor("Red");
+        product.setPrice(100);
         productList.add(product);
 
         Product product1 = new Product();
-        product.setBrand("Crocodile");
+        product1.setBrand("Crocodile");
+        product1.setColor("Blue");
+        product1.setPrice(150);
         productList.add(product1);
 
         /*Product product2 = new Product();
@@ -52,6 +55,20 @@ public class ProductSearchImpl {
     {
         List <Product> resultList = productList.stream()
                 .filter(product->product.getColor().equals(color))
+                .collect(Collectors.toList());
+
+        logger.error("*************************");
+        resultList.forEach(result->{
+            logger.error(result.getBrand());
+        });
+
+        return resultList;
+    }
+
+    public List<Product> findByPriceRange(int price)
+    {
+        List <Product> resultList = productList.stream()
+                .filter(product->product.getPrice()<price && product.getPrice()>price)
                 .collect(Collectors.toList());
 
         logger.error("*************************");
