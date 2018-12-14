@@ -47,6 +47,16 @@ public class QueueConfiguration {
     }
 
     @Bean
+    public Queue ackqueue() {
+        return new Queue("ackQueue", true);
+    }
+
+    @Bean
+    public DirectExchange ackexchange() {
+        return new DirectExchange("ackExchange");
+    }
+
+    @Bean
     public DirectExchange exchange() {
         return new DirectExchange(directExchange);
     }
@@ -74,6 +84,7 @@ public class QueueConfiguration {
             e.printStackTrace();
         }
         Channel channel = null;
+        Channel ackchannel = null;
         try {
             channel = connection.createChannel();
         } catch (IOException e) {
@@ -82,6 +93,10 @@ public class QueueConfiguration {
         try {
             channel.exchangeDeclare(directExchange, "direct", true);
             channel.queueBind(queueName, directExchange, routingKey);
+
+            ackchannel.exchangeDeclare("ackExchange", "direct", true);
+            ackchannel.queueBind("ackQueue", "ackExchange", "acknowledgement");
+
         } catch (Exception e) {
             System.out.println("Exception in Queue Binding");
         }
@@ -107,6 +122,17 @@ public class QueueConfiguration {
         container.setAcknowledgeMode(AcknowledgeMode.AUTO);
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(queue().getName());
+        container.setMessageListener(messageListenerAdapter);
+        return container;
+
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer ackListenerContainer(CachingConnectionFactory connectionFactory, MessageListenerAdapter messageListenerAdapter) {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setAcknowledgeMode(AcknowledgeMode.AUTO);
+        container.setConnectionFactory(connectionFactory);
+        container.setQueueNames("ackQueue");
         container.setMessageListener(messageListenerAdapter);
         return container;
 

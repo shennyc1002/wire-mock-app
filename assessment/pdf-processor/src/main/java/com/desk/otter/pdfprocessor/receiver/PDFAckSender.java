@@ -29,7 +29,7 @@ public class PDFAckSender {
     public void produce (String ack)
     {
 
-        amqpTemplate.convertAndSend(queue.getName(), ack);
+        amqpTemplate.convertAndSend("ackQueue", ack);
 
     }
 }

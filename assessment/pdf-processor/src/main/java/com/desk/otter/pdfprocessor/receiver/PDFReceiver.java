@@ -23,8 +23,7 @@ public class PDFReceiver {
 
         try {
             filePDF = new ObjectMapper().readValue(message, FilePDF.class);
-            logger.error("Received a message from queue");
-            processMessage(filePDF);
+            logger.error("Received a message from queue "+filePDF.getBlueprintId());
 
         } catch (JsonParseException e) {
             logger.error("Bad JSON in message: " + e);
@@ -34,6 +33,7 @@ public class PDFReceiver {
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
+        //processMessage(filePDF);
 
     }
 
